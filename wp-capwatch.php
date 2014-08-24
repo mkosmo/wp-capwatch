@@ -9,3 +9,10 @@
  * License: GPLv3
  */
 
+defined('ABSPATH') or die("No script kiddies please!");
+
+include_once plugin_dir_path( __FILE__ ) . 'options.php';
+include_once plugin_dir_path( __FILE__ ) . 'install.php';
+
+register_activation_hook( __FILE__, 'capwatch_install' );
+register_deactivation_hook( __FILE__, 'capwatch_uninstall' );
