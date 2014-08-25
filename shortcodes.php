@@ -91,7 +91,8 @@ function wp_capwatch_member_contact( $atts, $content = NULL ) {
 		$content = $content ? $content : "{$qry[0]->Rank} {$qry[0]->NameFirst} {$qry[0]->NameLast}";
 		return "<a href=\"{$link}?contact={$contact}\">{$content}</a>";
 	} else {
-		return "Vacant";
+		$content = $content ? $content : "Vacant";
+		return $content;
 	}
 
 }
