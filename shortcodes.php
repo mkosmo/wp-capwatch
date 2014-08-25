@@ -158,9 +158,7 @@ function wp_capwatch_member_email_form( $atts ) {
 				'message': jQuery('#message').val()
 			}
 			event.preventDefault();
-			jQuery.post( '/wp-admin/admin-ajax.php', data, function(result) {
-				alert(result)
-			} );
+			jQuery.post( '/wp-admin/admin-ajax.php', data );
 			jQuery('#email_form').html('<h3>Your message has been delivered.</h3>');
 			jQuery('html, body').animate({scrollTop:0}, 'slow');
 		});
