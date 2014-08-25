@@ -68,10 +68,15 @@ class wp_capwatch_SettingsPage
 
             <h3>Sort Duty Positions</h3>
             <?php 
-            $duty_position_order = get_option( 'wp_capwatch_duty_position_order' );
+
             $results = $wpdb->get_col( "SELECT DISTINCT Duty FROM {$wpdb->prefix}capwatch_duty_position WHERE Asst = 0", 0 );
-            $diff = array_diff( $results, $duty_position_order );
-            $duty_positions = array_intersect( $duty_position_order, $results );
+
+            if ( $duty_position_order = get_option( 'wp_capwatch_duty_position_order' ) ) {
+                $diff = array_diff( $results, $duty_position_order );
+                $duty_positions = array_intersect( $duty_position_order, $results );
+            } else {
+                $duty_positions = $results;
+            }
 
             ?>
             <ul id="duty_positions">
