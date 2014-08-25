@@ -45,7 +45,7 @@ function wp_capwatch_duty_positions( $atts ) {
 
 		if ( $a['link'] && $a['contact'] ) {
 			$link = $a['link'];
-			$contact = md5( $member->CAPID );
+			$contact = sha1( $member->CAPID );
 			$string .= "<td><a href=\"{$link}?contact={$contact}\">{$member->Rank} {$member->NameFirst} {$member->NameLast}</a></td>";
 		} else {
 			$string .= "<td>{$member->Rank} {$member->NameFirst} {$member->NameLast}</td>";
@@ -86,9 +86,89 @@ function wp_capwatch_member_contact( $atts, $content = NULL ) {
 		" );
 
 	$link = $a['link'];
-	$contact = md5( $qry[0]->CAPID );
+	$contact = sha1( $qry[0]->CAPID );
 	$content = $content ? $content : "{$qry[0]->Rank} {$qry[0]->NameFirst} {$qry[0]->NameLast}";
 
-	return "<a href=\"{$link}?contact={$contact}\">{$content}</a>";
+	if ( $qry ) {
+		return "<a href=\"{$link}?contact={$contact}\">{$content}</a>";
+	} else {
+		return "Vacant";
+	}
+
 }
 add_shortcode( 'member_contact', 'wp_capwatch_member_contact' );
+
+function wp_capwatch_member_email_form( $atts ) {
+
+	global $wpdb;
+
+	$a = shortcode_atts( array(
+		'contact' => $_GET['contact']
+		), $atts );
+
+	$table_prefix = $wpdb->prefix . 'capwatch_';
+
+	$qry = $wpdb->get_results( "
+		SELECT NameLast, NameFirst, Rank 
+		FROM {$table_prefix}member mbr
+		WHERE sha1( mbr.CAPID ) = '{$a['contact']}' 
+		" );
+
+	$string = "
+	<form id=\"email_form\">
+		<p>
+			<label for=\"to\" />To:</label> 
+			<input type=\"text\" value=\"{$qry[0]->Rank} {$qry[0]->NameFirst} {$qry[0]->NameLast}\" readonly=\"true\" />
+		</p>
+
+		<p>
+			<label for=\"from\" />Your Name:</label>
+			<input type=\"text\" name=\"from\" id=\"from\" />
+		</p>
+
+		<p>
+			<label for=\"email\" />Your Email Address:</label>
+			<input type=\"email\" name=\"email\" id=\"email\" />
+		</p>
+
+		<p>
+			<label for=\"subject\" />Subject:</label>
+			<input type=\"text\" name=\"subject\" id=\"subject\" />
+		</p>
+
+		<p>
+			<label for=\"message\" />Message:</label>
+			<textarea name=\"message\" id=\"message\" rows=\"5\"></textarea>
+		</p>
+
+		<p>
+			<input type=\"hidden\" name=\"contact\" id=\"contact\" value=\"{$a['contact']}\" />
+			<input type=\"submit\" value=\"Send Message\" />
+		</p>
+	</form>
+	<script type=\"text/javascript\">
+	jQuery(document).ready(function($) {
+		jQuery('#email_form').submit(function(event) {
+			var data = {
+				'action': 'send_member_email',
+				'contact': jQuery('#contact').val(),
+				'from': jQuery('#from').val(),
+				'email': jQuery('#email').val(),
+				'subject': jQuery('#subject').val(),
+				'message': jQuery('#message').val()
+			}
+			event.preventDefault();
+			jQuery.post( '/wp-admin/admin-ajax.php', data, function(result) {
+				alert(result)
+			} );
+			jQuery('#email_form').html('<h3>Your message has been delivered.</h3>');
+			jQuery('html, body').animate({scrollTop:0}, 'slow');
+		});
+	});
+	</script>
+";
+
+	return $string;
+
+}
+add_shortcode( 'member_email_form', 'wp_capwatch_member_email_form' );
