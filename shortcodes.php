@@ -102,7 +102,8 @@ function wp_capwatch_member_email_form( $atts ) {
 	global $wpdb;
 
 	$a = shortcode_atts( array(
-		'contact' => $_GET['contact']
+		'contact' => $_GET['contact'],
+		'form_name' => NULL
 		), $atts );
 
 	$table_prefix = $wpdb->prefix . 'capwatch_';
@@ -141,7 +142,6 @@ function wp_capwatch_member_email_form( $atts ) {
 		</p>
 
 		<p>
-			<input type=\"hidden\" name=\"contact\" id=\"contact\" value=\"{$a['contact']}\" />
 			<input type=\"submit\" value=\"Send Message\" />
 		</p>
 	</form>
@@ -150,7 +150,8 @@ function wp_capwatch_member_email_form( $atts ) {
 		jQuery('#email_form').submit(function(event) {
 			var data = {
 				'action': 'send_member_email',
-				'contact': jQuery('#contact').val(),
+				'contact': '{$a['contact']},
+				'form_name': '{$a['form_name']}',
 				'from': jQuery('#from').val(),
 				'email': jQuery('#email').val(),
 				'subject': jQuery('#subject').val(),
