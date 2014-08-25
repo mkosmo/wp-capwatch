@@ -85,11 +85,10 @@ function wp_capwatch_member_contact( $atts, $content = NULL ) {
 		AND dp.Asst = 0
 		" );
 
-	$link = $a['link'];
-	$contact = sha1( $qry[0]->CAPID );
-	$content = $content ? $content : "{$qry[0]->Rank} {$qry[0]->NameFirst} {$qry[0]->NameLast}";
-
 	if ( $qry ) {
+		$link = $a['link'];
+		$contact = sha1( $qry[0]->CAPID );
+		$content = $content ? $content : "{$qry[0]->Rank} {$qry[0]->NameFirst} {$qry[0]->NameLast}";
 		return "<a href=\"{$link}?contact={$contact}\">{$content}</a>";
 	} else {
 		return "Vacant";
