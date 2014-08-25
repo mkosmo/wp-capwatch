@@ -150,7 +150,7 @@ function wp_capwatch_member_email_form( $atts ) {
 		jQuery('#email_form').submit(function(event) {
 			var data = {
 				'action': 'send_member_email',
-				'contact': '{$a['contact']},
+				'contact': '{$a['contact']}',
 				'form_name': '{$a['form_name']}',
 				'from': jQuery('#from').val(),
 				'email': jQuery('#email').val(),
