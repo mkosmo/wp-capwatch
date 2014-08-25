@@ -1,12 +1,14 @@
 <?php
 
-global $capwatch_db_version;
-$capwatch_db_version = '1.0';
+defined('ABSPATH') or die("No script kiddies please!");
+
+global $wp_capwatch_db_version;
+$wp_capwatch_db_version = '1.0';
 
 function capwatch_install() {
 
 	global $wpdb;
-	global $capwatch_db_version;
+	global $wp_capwatch_db_version;
 
 	$table_prefix = $wpdb->prefix . 'capwatch_';
 	
@@ -61,11 +63,23 @@ function capwatch_install() {
 	) $charset_collate;";
 	dbDelta( $sql );
 
+	$table_name = $table_prefix . "member_contact";
+	$sql = "CREATE TABLE $table_name (
+		CAPID int(6) NOT NULL,
+		Type varchar(20) NOT NULL,
+		Priority varchar(10) NOT NULL,
+		Contact varchar(100) NOT NULL,
+		UsrID varchar(20) NOT NULL,
+		DateMod varchar(10) NOT NULL,
+		DoNotContact varchar(5) NOT NULL
+	) $charset_collate;";
+	dbDelta( $sql );
+
 	$table_name = $table_prefix . "duty_position";
 	$sql = "CREATE TABLE $table_name (
 		CAPID int(6) NOT NULL,
 		Duty varchar(100) NOT NULL,
-		FunctArea varchar(5) NOT NULL,
+		FunctArea varchar(20) NOT NULL,
 		Lvl varchar(10) NOT NULL,
 		Asst tinyint(1) NOT NULL,
 		UsrID varchar(20) NOT NULL,
@@ -74,7 +88,20 @@ function capwatch_install() {
 	) $charset_collate;";
 	dbDelta( $sql );
 
-	add_option( 'capwatch_db_version', $capwatch_db_version );
+	$table_name = $table_prefix . "cadet_duty_position";
+	$sql = "CREATE TABLE $table_name (
+		CAPID int(6) NOT NULL,
+		Duty varchar(100) NOT NULL,
+		FunctArea varchar(20) NOT NULL,
+		Lvl varchar(10) NOT NULL,
+		Asst tinyint(1) NOT NULL,
+		UsrID varchar(20) NOT NULL,
+		DateMod varchar(10) NOT NULL,
+		ORGID int(6) NOT NULL
+	) $charset_collate;";
+	dbDelta( $sql );
+
+	add_option( 'wp_capwatch_db_version', $wp_capwatch_db_version );
 
 }
 
@@ -85,12 +112,16 @@ function capwatch_uninstall() {
 
 	$table_prefix = $wpdb->prefix . 'capwatch_';
 
-	$table_list = array( 'member', 'duty_position' );
+	$table_list = array( 'member', 'member_contact', 'duty_position', 'cadet_duty_position' );
 
 	foreach( $table_list as $table ) {
 		$table_name = $table_prefix . $table;
-		$sql .= "DROP TABLE $table_name";
+		$sql = "DROP TABLE $table_name";
 		$wpdb->query( $sql );
 	}
+
+	delete_option( 'wp_capwatch_options' );
+	delete_option( 'wp_capwatch_db_version' );
+	delete_option( 'wp_capwatch_duty_position_order' );
 
 }

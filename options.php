@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') or die("No script kiddies please!");
+
 class wp_capwatch_SettingsPage
 {
     /**
@@ -36,12 +38,25 @@ class wp_capwatch_SettingsPage
      */
     public function create_admin_page()
     {
+        global $wpdb;
+
+        if ( $_FILES ) {
+            handle_capwatch_upload();
+        }
+
         // Set class property
         $this->options = get_option( 'wp_capwatch_options' );
         ?>
         <div class="wrap">
             <?php screen_icon(); ?>
             <h2>CAPWATCH Settings</h2>           
+
+            <h3>Upload CAPWATCH Database</h3>
+            <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" enctype="multipart/form-data">
+                <input type="file" name="db_file" accept="application/zip" />
+                <input type="submit" value="Upload Database" />
+            </form>
+
             <form method="post" action="options.php">
             <?php
                 // This prints out all hidden setting fields
@@ -50,6 +65,20 @@ class wp_capwatch_SettingsPage
                 submit_button(); 
             ?>
             </form>
+
+            <h3>Sort Duty Positions</h3>
+            <?php 
+            $duty_position_order = get_option( 'wp_capwatch_duty_position_order' );
+            $results = $wpdb->get_col( "SELECT DISTINCT Duty FROM {$wpdb->prefix}capwatch_duty_position WHERE Asst = 0", 0 );
+            $diff = array_diff( $results, $duty_position_order );
+            $duty_positions = array_intersect( $duty_position_order, $results );
+
+            ?>
+            <ul id="duty_positions">
+            <?php foreach( $duty_positions as $duty_position ) { ?>
+                <li id="<?php echo $duty_position; ?>" class="ui-state-default"><?php echo $duty_position; ?></li>
+            <?php } ?>
+            </ul>
         </div>
         <?php
     }
@@ -115,6 +144,27 @@ class wp_capwatch_SettingsPage
         );
     }
 }
+
+function update_duty_position_order_js() {
+?>
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    jQuery('#duty_positions').sortable({
+        cursor: 'move',
+        update: function() {
+            var order = jQuery('#duty_positions').sortable('toArray');
+            var data = {
+                'action': 'update_duty_position_order',
+                'order': order
+            }
+            jQuery.post( ajaxurl, data );
+        }
+    });
+});
+</script>
+<?php 
+}
+add_action( 'admin_footer', 'update_duty_position_order_js' );
 
 if( is_admin() )
     $wp_capwatch_settings_page = new wp_capwatch_SettingsPage();
