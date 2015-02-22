@@ -3,7 +3,7 @@
  * Plugin Name: wp-CAPWATCH for Unit Websites
  * Plugin URI: http://www.inick.net
  * Description: This plugin uses CAPWATCH data to populate fields on a unit website with membership data.
- * Version: 0.1.0
+ * Version: 1.0.0
  * Author: Nick McLarty
  * Author URI: https://www.inick.net
  * License: GPLv3
@@ -21,7 +21,7 @@ register_deactivation_hook( __FILE__, 'capwatch_uninstall' );
 
 function wp_capwatch_enqueue_scripts() {
 	wp_enqueue_script( 'jquery-ui-sortable' );
-	wp_enqueue_style( 'wp-capwatch', plugin_dir_url( __FILE__ ) . 'wp-capwatch.css', NULL, '0.1.0' );
+	wp_enqueue_style( 'wp-capwatch', plugin_dir_url( __FILE__ ) . 'css/wp-capwatch.css', NULL, '1.0.0' );
 }
 add_action( 'admin_init', 'wp_capwatch_enqueue_scripts' );
 
