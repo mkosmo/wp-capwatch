@@ -74,10 +74,12 @@ class wp_capwatch_SettingsPage
             if ( $duty_position_order = get_option( 'wp_capwatch_duty_position_order' ) ) {
                 $diff = array_diff( $results, $duty_position_order );
                 $duty_positions = array_intersect( $duty_position_order, $results );
+                $duty_positions = array_merge( $duty_positions, $diff );
             } else {
                 $duty_positions = $results;
             }
-
+            update_option( 'wp_capwatch_duty_position_order', $duty_positions );
+            
             ?>
             <ul id="duty_positions">
             <?php foreach( $duty_positions as $duty_position ) { ?>
