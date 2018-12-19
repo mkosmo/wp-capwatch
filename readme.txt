@@ -2,7 +2,7 @@
 Contributors: mclarty, mkosmo
 Tags: cap
 Requires at least: 4.6
-Tested up to: 5.0
+Tested up to: 5.0.2
 Stable tag: master
 Requires PHP: 5.2.4
 License: GPLv3 or later
@@ -28,6 +28,9 @@ Once the settings page is complete, you may use the following shortcodes anywher
 The duty_positions shortcode creates a table of all senior duty positions for use on a staff roster style page.  If the contact attribute is false, then no links to contact members will be active. If set to true, then their name will link to their email address.
 
 == Changelog ==
+
+= 1.1.1 =
+* Updated to reflect testing against 5.0.2.
 
 = 1.1.0 =
 * General cleanup.
