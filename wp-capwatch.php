@@ -3,7 +3,7 @@
  * Plugin Name: wp-capwatch
  * Plugin URI: https://github.com/mkosmo/wp-capwatch
  * Description: Provides CAPWATCH integration for a unit website.  Forked from Nick McLarty.
- * Version: 1.0.1-451a-2
+ * Version: 1.1.0
  * Author: Matthew Kosmoski
  * Author URI: https://github.com/mkosmo
  * License: GPLv3
@@ -40,35 +40,8 @@ function wp_capwatch_update_duty_position_order() {
 	global $wpdb;
 
 	update_option( 'wp_capwatch_duty_position_order', $_POST['order'] );
-    
+
     die();
 
 }
 add_action( 'wp_ajax_update_duty_position_order', 'wp_capwatch_update_duty_position_order' );
-
-
-function wp_capwatch_send_member_email() {
-
-	global $wpdb;
-
-	$table_prefix = $wpdb->prefix . 'capwatch_';
-
-	$qry = $wpdb->get_results( "
-	SELECT NameLast, NameFirst, Rank, Contact 
-	FROM {$table_prefix}member mbr
-	INNER JOIN {$table_prefix}member_contact cont
-		ON mbr.CAPID = cont.CAPID 
-	WHERE sha1( mbr.CAPID ) = '{$_POST['contact']}' 
-		AND cont.Type = 'EMAIL' 
-		AND cont.Priority = 'PRIMARY'
-	" );
-
-	$headers[] = "From: {$_POST['from']} <{$_POST['email']}>";
-	$subject = get_bloginfo( 'name' ) . " Submission: {$_POST['subject']}";
-	$body = "You have received a message via the '{$_POST['form_name']}' email form:\n\n{$_POST['message']}";
-	wp_mail( $qry[0]->Contact, $subject, $body, $headers );
-
-	die();
-
-}
-add_action( 'wp_ajax_send_member_email', 'wp_capwatch_send_member_email' );

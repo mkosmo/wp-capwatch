@@ -29,6 +29,11 @@ The duty_positions shortcode creates a table of all senior duty positions for us
 
 == Changelog ==
 
+= 1.1.0 =
+* General cleanup.
+* Create new members from CAPWATCH if they don't exist.
+* Update existing users email/grade/name if CAPWATCH updates.
+
 = 1.0.1-451a =
 * Initial adaptations for TX-451.
 * Squadron duty roster no longer uses custom email form.
@@ -36,4 +41,3 @@ The duty_positions shortcode creates a table of all senior duty positions for us
 
 = 1.0.1 =
 * Original version forked from Nick McLarty's repository.
-
