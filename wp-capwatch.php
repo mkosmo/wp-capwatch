@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: wp-CAPWATCH for Unit Websites
- * Plugin URI: http://www.inick.net
- * Description: This plugin uses CAPWATCH data to populate fields on a unit website with membership data.
- * Version: 1.0.0-451a
- * Author: Nick McLarty
- * Author URI: https://www.inick.net
+ * Plugin Name: wp-capwatch
+ * Plugin URI: https://github.com/mkosmo/wp-capwatch
+ * Description: Provides CAPWATCH integration for a unit website.  Forked from Nick McLarty.
+ * Version: 1.0.1-451a
+ * Author: Matthew Kosmoski
+ * Author URI: https://github.com/mkosmo
  * License: GPLv3
  */
 
@@ -18,6 +18,15 @@ include_once plugin_dir_path( __FILE__ ) . 'upload.php';
 
 register_activation_hook( __FILE__, 'capwatch_install' );
 register_deactivation_hook( __FILE__, 'capwatch_uninstall' );
+
+// PUC Code
+require 'plugin-update-checker/plugin-update-checker.php';
+$myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+	'https://github.com/mkosmo/wp-capwatch/',
+	__FILE__,
+	'wp-capwatch'
+);
+// END PUC Code
 
 function wp_capwatch_enqueue_scripts() {
 	wp_enqueue_script( 'jquery-ui-sortable' );
