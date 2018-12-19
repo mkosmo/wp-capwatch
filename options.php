@@ -25,10 +25,10 @@ class wp_capwatch_SettingsPage
     {
         // This page will be under "Settings"
         add_options_page(
-            'CAPWATCH Settings', 
-            'CAPWATCH Settings', 
-            'manage_options', 
-            'wp-capwatch-setting-admin', 
+            'CAPWATCH Settings',
+            'CAPWATCH Settings',
+            'manage_options',
+            'wp-capwatch-setting-admin',
             array( $this, 'create_admin_page' )
         );
     }
@@ -49,27 +49,28 @@ class wp_capwatch_SettingsPage
         ?>
         <div class="wrap">
             <?php screen_icon(); ?>
-            <h2>CAPWATCH Settings</h2>           
+            <h2>CAPWATCH Settings</h2>
 
             <h3>Upload CAPWATCH Database</h3>
             <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" enctype="multipart/form-data">
                 <input type="file" name="db_file" accept="application/zip" />
+                <input type="checkbox" name="create_users" checked><label for="create_users">Create Users?</label>
                 <input type="submit" value="Upload Database" />
             </form>
 
             <form method="post" action="options.php">
             <?php
                 // This prints out all hidden setting fields
-                settings_fields( 'unit-settings' );   
+                settings_fields( 'unit-settings' );
                 do_settings_sections( 'wp-capwatch-setting-admin' );
-                submit_button(); 
+                submit_button();
             ?>
             </form>
 
             <h3>Sort Duty Positions</h3>
-            <?php 
+            <?php
 
-            $results = $wpdb->get_col( "SELECT DISTINCT Duty FROM {$wpdb->prefix}capwatch_duty_position WHERE Asst = 0", 0 );
+            $results = $wpdb->get_col( "SELECT DISTINCT Duty FROM {$wpdb->prefix}capwatch_duty_position", 0 );
 
             if ( $duty_position_order = get_option( 'wp_capwatch_duty_position_order' ) ) {
                 $diff = array_diff( $results, $duty_position_order );
@@ -79,7 +80,7 @@ class wp_capwatch_SettingsPage
                 $duty_positions = $results;
             }
             update_option( 'wp_capwatch_duty_position_order', $duty_positions );
-            
+
             ?>
             <ul id="duty_positions">
             <?php foreach( $duty_positions as $duty_position ) { ?>
@@ -94,7 +95,7 @@ class wp_capwatch_SettingsPage
      * Register and add settings
      */
     public function page_init()
-    {        
+    {
         register_setting(
             'unit-settings', // Option group
             'wp_capwatch_options', // Option name
@@ -106,15 +107,15 @@ class wp_capwatch_SettingsPage
             'Unit Settings', // Title
             array( $this, 'print_section_info' ), // Callback
             'wp-capwatch-setting-admin' // Page
-        );  
+        );
 
         add_settings_field(
             'unit_charter', // ID
-            'Unit Charter Number', // Title 
+            'Unit Charter Number', // Title
             array( $this, 'unit_charter_cb' ), // Callback
             'wp-capwatch-setting-admin', // Page
-            'unit-settings' // Section           
-        );      
+            'unit-settings' // Section
+        );
 
     }
 
@@ -132,7 +133,7 @@ class wp_capwatch_SettingsPage
         return $new_input;
     }
 
-    /** 
+    /**
      * Print the Section text
      */
     public function print_section_info()
@@ -140,7 +141,7 @@ class wp_capwatch_SettingsPage
         print 'Enter your settings below:';
     }
 
-    /** 
+    /**
      * Get the settings option array and print one of its values
      */
     public function unit_charter_cb()
@@ -169,7 +170,7 @@ jQuery(document).ready(function($) {
     });
 });
 </script>
-<?php 
+<?php
 }
 add_action( 'admin_footer', 'update_duty_position_order_js' );
 

@@ -45,6 +45,8 @@ function handle_capwatch_upload() {
 		deleteDir( $upload_dir['capwatch'] );
 	}
 
+	syncUsers();
+
 }
 
 function dbLoadTable( $fileName, $tableName ) {
@@ -119,4 +121,55 @@ function deleteDir( $dirPath ) {
 
 	rmdir( $dirPath );
 
+}
+
+function syncUsers() {
+	if (!isset($_POST["create_users"]))
+		return;
+
+	global $wpdb;
+	$table_prefix = $wpdb->prefix . 'capwatch_';
+	$qry = $wpdb->get_results( "
+					SELECT member.CAPID, NameLast, NameFirst, NameMiddle, Rank,
+						Contact AS Email
+					FROM {$table_prefix}member member
+					INNER JOIN {$table_prefix}member_contact contact
+						ON contact.CAPID = member.CAPID
+					WHERE contact.Type = 'EMAIL'
+						AND contact.Priority = 'PRIMARY'
+					ORDER BY NameLast, NameFirst
+					" );
+
+	if ( $qry == FALSE ) {
+		$error = capwatchError( '<strong>MySQL Error:</strong> Query failed.' );
+		$wpdb->print_error();
+		return FALSE;
+	}
+
+	if (WP_DEBUG === true)
+		error_log(print_r(var_dump($qry)));
+
+	foreach( $qry as $row ) {
+		$userdata = array(
+			'user_login' => $row->CAPID,
+			'first_name' => $row->NameFirst,
+			'last_name' => $row->NameLast,
+			'user_email' => $row->Email,
+		);
+
+		$userid = username_exists( $row->CAPID );
+		if ( !$userid and email_exists($row->Email) == false ) {
+			$userdata['user_pass'] = wp_generate_password( $length=12, $include_standard_special_chars=false );
+			$userid = wp_insert_user( $userdata );
+			wp_new_user_notification( $userid, null, 'both' );
+			unset( $userdata['user_pass'] );
+		}
+
+		if (WP_DEBUG === true)
+			error_log(print_r(var_dump($userid)));
+
+		$userdata['ID'] = $userid;
+		wp_update_user( $userdata );
+		update_user_meta( $userid, 'grade', $row->Rank);
+	}
 }
