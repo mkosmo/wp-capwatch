@@ -3,7 +3,7 @@
  * Plugin Name: wp-capwatch
  * Plugin URI: https://github.com/mkosmo/wp-capwatch
  * Description: Provides CAPWATCH integration for a unit website.  Forked from Nick McLarty.
- * Version: 1.0.1-451a
+ * Version: 1.0.1-451a-2
  * Author: Matthew Kosmoski
  * Author URI: https://github.com/mkosmo
  * License: GPLv3
